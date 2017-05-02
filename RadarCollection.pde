@@ -12,16 +12,20 @@ public class RadarCollection extends Being {
 
   private Radar[] mRadars;
 
-  public RadarCollection(final float x, final float y, final float screenSize) {
+  public RadarCollection() {
+    final float screenSize = max(width, height);
     mRadars = new Radar[1 + (int) random(10)];
 
     for (int i = 0; i < mRadars.length; i++) {
-      mRadars[i] = new Radar(x, y, random(screenSize * 0.4f) + 64, random(TWO_PI));
+      mRadars[i] = new Radar(mStartX, mStartY, random(screenSize * 0.4f) + 64, random(TWO_PI));
     }
     mJitter = screenSize * 0.01f;
   }
 
   boolean drawIfAlive(final color c) {
+    noFill();
+    stroke(c);
+    
     boolean updatedOne = false;
     for (final Radar radar : mRadars) {
       updatedOne |= radar.update();

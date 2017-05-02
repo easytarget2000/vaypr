@@ -2,11 +2,11 @@ class BackdropTriangle extends Being {
 
   private static final int MAX_AGE = 1024;
 
-  private static final int MAX_BRIGHTNESS = 128;
+  private static final int MAX_BRIGHTNESS = 64;
 
   private static final int sNumberOfColumns = 24;
 
-  private static final int sNumberOfRows = 20;
+  private static final int sNumberOfRows = 16;
 
   private static final boolean FILLED = true;
   
@@ -41,7 +41,13 @@ class BackdropTriangle extends Being {
 
     final float columnLeft = mColumn * mWidth;
 
-    adjustColorAndDrawMode();
+    //if (FILLED) {
+    //  noStroke();
+    //  fill(mColor);
+    //} else {
+    //  noFill();
+    //  stroke(mColor);
+    //}
 
     if (mRow % 2 == 0) {
       if (mPointUp) {
@@ -65,7 +71,6 @@ class BackdropTriangle extends Being {
         vertex(0f + columnLeft, rowBottom);
         endShape(CLOSE);
       } else {
-        adjustColorAndDrawMode();
         beginShape();
         vertex(0f + columnLeft, rowBottom);
         vertex(-mWidthHalf + columnLeft + mWidth, rowTop);
@@ -77,14 +82,4 @@ class BackdropTriangle extends Being {
     return mAge++ < MAX_AGE;
   }
 
-  private void adjustColorAndDrawMode() {
-
-    if (FILLED) {
-      noStroke();
-      fill(mColor);
-    } else {
-      noFill();
-      stroke(mColor);
-    }
-  }
 }

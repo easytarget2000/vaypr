@@ -19,7 +19,6 @@ class FoliageBuilder implements BeingBuilder {
 
   FoliageBuilder() {
     mSymmetric = (int) random(3) % 2 == 0;
-    mSymmetric = false; /// DEBUG!
 
     if ((int) random(2) % 2 == 0) {
       mPaintMode = Foliage.LINE_MODE;
@@ -34,14 +33,10 @@ class FoliageBuilder implements BeingBuilder {
     foliage.setSymmetric(mSymmetric);
     foliage.setRectMode(mPaintMode);
     switch ((int) random(5)) {
-      //case 0:
-      //case 1:
-      //    foliage.initPolygon(x, y);
-      //    break;
-
+    //case 0:
+      //foliage.initGrill();
     default:
-      //foliage.initCircle(x, y);
-      foliage.initGrill();
+      foliage.initCircle();
     }
 
     foliage.setImage(loadImage("q02.png"));
@@ -53,7 +48,7 @@ class FoliageBuilder implements BeingBuilder {
   }
 
   int getRecommendedMaxNumber() {
-    return 1; // /DEBUG; 
+    return 1; // /DEBUG;
   }
 }
 
@@ -64,7 +59,7 @@ class FoliageBuilder implements BeingBuilder {
 class FlowerStickBuilder implements BeingBuilder {
 
   Being build(final float x, final float y) {
-    return new FlowerStick(displayHeight, x, y);
+    return new FlowerStick();
   }
 
   int getRecommendedAlpha() {
@@ -84,11 +79,11 @@ class RadarCollectionBuilder implements BeingBuilder {
 
   Being build(final float x, final float y) {
     final int displaySize = max(displayWidth, displayHeight);
-    return new RadarCollection(x, y, random(displaySize));
+    return new RadarCollection();
   }
 
   int getRecommendedAlpha() {
-    return 64;
+    return 32;
   }
 
   int getRecommendedMaxNumber() {
@@ -110,7 +105,7 @@ class BambooTilesBuilder implements BeingBuilder {
   }
 
   public Being build(float x, float y) {
-    return new BambooTile(mTileSize, x, y, true);
+    return new BambooTile(mTileSize, true);
   }
 
   public int getRecommendedAlpha() {

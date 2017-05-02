@@ -9,17 +9,21 @@ private static final char DECREASE_HEAT_KEY = 'w';
 
 private static final char INCREASE_HEAT_KEY = 's';
 
-private static final char ADD_TRIANGLE_KEY = 't' ;
+private static final char ADD_BACKDROP_BEING_KEY = 't' ;
 
 private static final int TAP_RESET_INTERVAL_MILLIS = 1500;
 
-private static final boolean SOLID_BACKDROP = true;
+private static final int NUM_OF_INITIAL_BACKDROP_BEINGS = 2;
 
 private BeingBuilder mBeingBuilder;
 
 private ArrayList<Being> mBeings = new ArrayList<Being>();
 
 private ArrayList<Being> mBackdropBeings = new ArrayList<Being>();
+
+private boolean mDrawOverlayImage = true;
+
+private PImage mOverlayImage;
 
 private color mColor = 0xffffffff;
 
@@ -36,12 +40,17 @@ private int mBeatMultipleToTrigger = 2;
 
 private int mLastKeyPressMillis = 0;
 
+private ArrayList<Integer> mTaps = new ArrayList<Integer>();
 
 void setup() {
   //fullScreen(2);
-  size(800, 600);
-  resetScreen();
-  noFill();
+  fullScreen();
+  //size(800, 600);
+
+  mOverlayImage = loadImage("mnq.png");
+
+  resetBackdropBeings();
+  resetScreenWithBackdrop();
 
   setRandomBeingBuilder();
 
@@ -52,7 +61,7 @@ void setup() {
 }
 
 void draw() {
-  
+
   for (int f = 0; f < mBeings.size(); f++) {
     final Being being = mBeings.get(f);
     final boolean beingIsAlive = being.drawIfAlive(mColor);
@@ -63,6 +72,12 @@ void draw() {
   }
 
   countBeats();
+  
+  if (mDrawOverlayImage) {
+    final float imageX = (width / 2f) - (mOverlayImage.width / 2f);
+    final float imageY = (height / 2f) - (mOverlayImage.height / 2f);
+    image(mOverlayImage, imageX, imageY);
+  }
 }
 
 void keyPressed() {
@@ -71,7 +86,7 @@ void keyPressed() {
 
   switch (key) {
   case TAP_KEY:
-    resetScreen();
+    resetScreenWithBackdrop();
     handleTap();
     break;
 
@@ -86,34 +101,38 @@ void keyPressed() {
   case INCREASE_HEAT_KEY:
     increaseHeat();
     break;
-  
-  case ADD_TRIANGLE_KEY:
+
+  case ADD_BACKDROP_BEING_KEY:
     addBackdropBeing();
   }
 }
 
-private void resetScreen() {
+private void resetScreenWithBackdrop() {
   background(0);
-  
-  final ArrayList<Integer> deadBackdropIndices = new ArrayList<Integer>();
+
+  final ArrayList<Being> deadBackdrops = new ArrayList<Being>();
   for (int i = 0; i < mBackdropBeings.size(); i++) {
     if (!mBackdropBeings.get(i).drawIfAlive(0)) {
-      deadBackdropIndices.add(i);
+      deadBackdrops.add(mBackdropBeings.get(i));
     }
   }
-  
-  for (final Integer deadBeingIndex : deadBackdropIndices) {
-    mBackdropBeings.remove(deadBeingIndex);
+
+  for (final Being deadBeing : deadBackdrops) {
+    mBackdropBeings.remove(deadBeing);
   }
+
 }
 
 private void addBackdropBeing() {
-  println("main: addBackdropBeing()");
-  mBackdropBeings.add(new BackdropTriangle());
+  //mBackdropBeings.add(new BackdropTriangle());
+  mBackdropBeings.add(new ImageBeing());
 }
 
-private void resetBackdropTriangles() {
+private void resetBackdropBeings() {
   mBackdropBeings = new ArrayList<Being>();
+  for (int i = 0; i < NUM_OF_INITIAL_BACKDROP_BEINGS; i++) {
+    addBackdropBeing();
+  }
 }
 
 private void setRandomBeingBuilder() {
@@ -130,15 +149,11 @@ private void setRandomBeingBuilder() {
   default:
     mBeingBuilder = new FoliageBuilder();
   }
-
-
-  // DEBUG!
-  mBeingBuilder = new FoliageBuilder();
-
-  setRandomColor();
 }
 
-private ArrayList<Integer> mTaps = new ArrayList<Integer>();
+private void setDrawOverlayImage() {
+  //mDrawOverlayImage = (int) (random(2) % 2) == 0;
+}
 
 private void handleTap() {
 
@@ -192,9 +207,9 @@ private void increaseHeat() {
   } else {
     mBeatMultipleToTrigger /= 2;
     if (mBeatMultipleToTrigger == 1) {
-      setRandomColorWithAlpha(mBeingBuilder.getRecommendedAlpha() * 4);
+      setRandomColorWithAlpha(mBeingBuilder.getRecommendedAlpha());
     } else if (mBeatMultipleToTrigger == 2) {
-      setRandomColorWithAlpha(mBeingBuilder.getRecommendedAlpha() * 2);
+      setRandomColorWithAlpha(mBeingBuilder.getRecommendedAlpha());
     }
   }
 
@@ -215,7 +230,7 @@ private void countBeats() {
       if (VERBOSE) {
         println("main: countBeats(): Beat!");
       }
-      //clearScreen(); /// DEBUG
+      resetScreenWithBackdrop();
     }
 
     if (mCurrentBeat % (mBeatMultipleToTrigger * 2) == 0) {
@@ -224,10 +239,12 @@ private void countBeats() {
 
     if (mCurrentBeat % 8 == 0) {
       setRandomColor();
+      addBackdropBeing();
     }
 
     if (mCurrentBeat % 32 == 0) {
       setRandomBeingBuilder();
+      setDrawOverlayImage();
     }
   }
 }
@@ -247,12 +264,12 @@ private void addBeing() {
   mBeings.add(mBeingBuilder.build(x, y));
 }
 
-private void setRandomColorWithAlpha(final int alpha) {
-  stroke(getRandomColorWithAlpha(alpha));
+private void setRandomColor() {
+  mColor = getRandomColor();
 }
 
-private void setRandomColor() {
-  stroke(getRandomColor());
+private void setRandomColorWithAlpha(final int alpha) {
+  mColor = getRandomColorWithAlpha(alpha);
 }
 
 private color getRandomColor() {

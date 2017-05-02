@@ -3,10 +3,6 @@ class FlowerStick extends Being {
 
   private static final int NUM_OF_INITIAL_NODES = 48;
 
-  private float mBlossomX;
-
-  private float mBlossomY;
-
   private float mDisplayHeight;
 
   private boolean mGrowing = true;
@@ -19,19 +15,16 @@ class FlowerStick extends Being {
 
   private float mLastLineY;
 
-  FlowerStick(final float displayHeight, final float x, final float y) {
-    mDisplayHeight = displayHeight;
+  FlowerStick() {
     mJitter = mDisplayHeight * 0.001f;
-    mBlossomX = x;
-    mBlossomY = y;
-    mLastLineX = (float) mBlossomX;
+    mLastLineX = (float) mStartX;
     mLastLineY = (float) mDisplayHeight;
   }
 
   boolean drawIfAlive(final color c) {
     final float currentY = (float) mDisplayHeight - mAge;
 
-    if (currentY < mBlossomY) {
+    if (currentY < mStartY) {
 
       if (mBranches == null) {
         final int numberOfBranches = 8 + (int) random(64);
@@ -64,7 +57,7 @@ class FlowerStick extends Being {
       }
      
     } else {
-      final float newLineX = (float) (mBlossomX + getJitter());
+      final float newLineX = (float) (mStartX + getJitter());
       line(
         mLastLineX, 
         mLastLineY, 
@@ -104,8 +97,8 @@ class FlowerStick extends Being {
 
     private boolean drawAndUpdate(final color c) {
 
-      final float x = mBlossomX + (cos(mAngle) * mCurrentLength);
-      final float y = mBlossomY + (sin(mAngle) * mCurrentLength);
+      final float x = mStartX + (cos(mAngle) * mCurrentLength);
+      final float y = mStartY + (sin(mAngle) * mCurrentLength);
 
       if (mCurrentLength > mFinalLength) {
         if (mNumberOfPodsLeft > 0) {
@@ -121,8 +114,8 @@ class FlowerStick extends Being {
 
       mCurrentLength += mSpeed;
 
-      final float newX = mBlossomX + (cos(mAngle) * mCurrentLength);
-      final float newY = mBlossomY + (sin(mAngle) * mCurrentLength);
+      final float newX = mStartX + (cos(mAngle) * mCurrentLength);
+      final float newY = mStartY + (sin(mAngle) * mCurrentLength);
 
       stroke(colorWithNewAlpha(c, 64));
       line(x, y, newX, newY);

@@ -1,8 +1,8 @@
 class Foliage extends Being {
 
-  private static final int NUM_OF_INITIAL_NODES = 64;
+  private static final int NUM_OF_INITIAL_NODES = 128;
 
-  private static final int MAX_AGE = 2;
+  private static final int MAX_AGE = 200;
 
   private static final int ADD_NODE_LIMIT = 128;
 
@@ -57,15 +57,15 @@ class Foliage extends Being {
     mImage = image;
   }
 
-  Foliage initCircle(final float x, final float y) {
+  Foliage initCircle() {
 
     final int numberOfCircles = (int) random(5) + 1;
 
     Node lastNode = null;
     for (int c = 0; c < numberOfCircles; c++) {
 
-      final float circleCenterX = x + (getJitter() * 10f);
-      final float circleCenterY = y + (getJitter() * 10f);
+      final float circleCenterX = mStartX + (getJitter() * 10f);
+      final float circleCenterY = mStartY + (getJitter() * 10f);
       final float radius = random(mDisplaySize * 0.01f) + mDisplaySize * 0.01f;
       final float squeezeFactor = random(0.66f) + 0.66f;
 
@@ -100,7 +100,7 @@ class Foliage extends Being {
 
   Foliage initGrill() {
 
-    final int numberOfLines = 5;
+    final int numberOfLines = (int) random(NUM_OF_INITIAL_NODES);
 
     final int numberOfNodesPerLine = NUM_OF_INITIAL_NODES / numberOfLines;
 
@@ -121,7 +121,8 @@ class Foliage extends Being {
 
       node.mX = lineStart + (lineSpacing * line);
 
-      final float relativeDistanceFromLineStart = ((float) i - (numberOfNodesPerLine * line)) / (float) numberOfNodesPerLine;
+      final float relativeDistanceFromLineStart;
+      relativeDistanceFromLineStart = (float) ((i + 1f) - (numberOfNodesPerLine * line)) / (float) numberOfNodesPerLine;
       final float distanceFromLineStart = lineLength * relativeDistanceFromLineStart;
 
       if (line % 2 == 0) {
@@ -129,13 +130,6 @@ class Foliage extends Being {
       } else {
         node.mY = lineStart + lineLength - distanceFromLineStart;
       }
-
-      //println("Foliage: initGrill(): ----");
-      //println("Foliage: initGrill(): line: " + line);
-      //println("Foliage: initGrill(): relativeDistanceFromLineStart: " + relativeDistanceFromLineStart);
-      //println("Foliage: initGrill(): distanceFromLineStart: " + distanceFromLineStart);
-      //println("Foliage: initGrill(): node.mX: " + node.mX);
-      //println("Foliage: initGrill(): node.mY: " + node.mY);
 
       if (mFirstNode == null) {
         mFirstNode = node;
@@ -166,6 +160,9 @@ class Foliage extends Being {
     }
 
     mStopped = false;
+
+    noFill();
+    stroke(c);
 
     Node currentNode = mFirstNode;
     Node nextNode;
@@ -203,7 +200,7 @@ class Foliage extends Being {
     } while (!mStopped && currentNode != mFirstNode);
 
     if (!mSymmetric) {
-      endShape(CLOSE);
+      endShape();
 
       //if (!mPaintedInitialFilling) {
       //  final int lastAlpha = paint.getAlpha();
@@ -228,7 +225,6 @@ class Foliage extends Being {
   }
 
   private void drawSymmetric(final Node node, final color c) {
-    stroke(c);
     point((int) node.mX, (int) node.mY);
     //point((int) node.mX, (int) node.mY + 1);
     //point((int) node.mX + 1, (int) node.mY + 1);

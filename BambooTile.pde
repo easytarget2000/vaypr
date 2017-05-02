@@ -20,12 +20,12 @@ class BambooTile extends Being {
 
   private float mBottomY[] = new float[NUM_OF_STROKES];
 
-  BambooTile(final float tileSize, final float x, final float y, final boolean drawLines) {
+  BambooTile(final float tileSize, final boolean drawLines) {
     mJitter = tileSize;
     mDrawLines = drawLines;
 
-    final float column = floor(x / tileSize);
-    final float row = floor(y / tileSize);
+    final float column = floor(mStartX / tileSize);
+    final float row = floor(mStartY / tileSize);
 
     final boolean growsHorizontally = mGrowthDirection % 2 == 0;
 
@@ -41,6 +41,9 @@ class BambooTile extends Being {
   }
 
   boolean drawIfAlive(final color c) {
+    noFill();
+    stroke(c);
+
     for (int i = 0; i < NUM_OF_STROKES; i++) {
 
       final float startX;
