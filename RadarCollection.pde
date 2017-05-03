@@ -6,7 +6,7 @@
 
 public class RadarCollection extends Being {
 
-  private static final int MAX_AGE = 5;
+  private static final int MAX_AGE = 16;
 
   private int mAge = 0;
 
@@ -25,17 +25,17 @@ public class RadarCollection extends Being {
   boolean drawIfAlive(final color c) {
     noFill();
     stroke(c);
-    
+
     boolean updatedOne = false;
     for (final Radar radar : mRadars) {
       updatedOne |= radar.update();
-      
+
       line(
         radar.getStartX(), 
         radar.getStartY(), 
         radar.getEndX(), 
         radar.getEndY()
-       );
+        );
     }
     return updatedOne;
   }
@@ -79,20 +79,15 @@ public class RadarCollection extends Being {
       mInitialLength = radius * 0.33;
       mCurrentLength = mInitialLength;
 
-      mMaxAge = (int) random(1000) + 100;
+      mMaxAge = (int) random(2048) + 256;
 
       mInitialAngle = angle;
       mAngleStep = TWO_PI / (float) mMaxAge;
-      //            final float maxInertia = length / 3.0;
-      //            final float minInertia = -maxInertia;
-      //            mInertiaX = minInertia + random(maxInertia * 2);
-      //            mInertiaY = minInertia + random(maxInertia * 2);
 
       //Log.d(TAG, "Initializing " + toString());
     }
 
-    @Override
-      public String toString() {
+    public String toString() {
       return "[RadarCollection.Radar around " + mCenterX + ", " + mCenterY
         + ", radius " + mRadius + "]";
     }
@@ -119,17 +114,6 @@ public class RadarCollection extends Being {
     }
 
     private boolean update() {
-      //
-      //            for (final Radar otherLine : mRadars) {
-      //                if (otherLine == this) {
-      //                    continue;
-      //                }
-      //
-      //                final float distance = distance(mCenterX, mCenterY, otherLine.mCenterX, otherLine.mCenterY);
-      //                if (distance < 16) {
-      //                    mCurrentAngle = angle(mCenterX, mCenterY, otherLine.mCenterX, otherLine.mCenterY);
-      //                }
-      //            }
 
       if (mAge > mMaxAge * 0.9) {
         mCurrentLength = mInitialLength + ((mInitialLength - mCurrentLength) / 10);
@@ -143,10 +127,6 @@ public class RadarCollection extends Being {
       }
 
       mCurrentAngle = mInitialAngle + (mAge++ * mAngleStep);
-      //            mCurrentAngle += ((double) mMaxAge / ++mAge) / 10.0;
-
-      //            mCenterX += getDoubleJitter();
-      //            mCenterY += getDoubleJitter();
 
       return mAge <= mMaxAge;
     }

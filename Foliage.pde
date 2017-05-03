@@ -1,18 +1,20 @@
 class Foliage extends Being {
 
-  private static final int NUM_OF_INITIAL_NODES = 128;
+  private static final int NUM_OF_INITIAL_NODES = 64;
 
-  private static final int MAX_AGE = 200;
+  private static final int MAX_AGE = 360;
 
-  private static final int ADD_NODE_LIMIT = 128;
+  private static final int ADD_NODE_LIMIT = 32;
 
-  private static final float PUSH_FORCE = 8f;
+  private static final float PUSH_FORCE = 4f;
 
   private Node mFirstNode;
 
   private float mDisplaySize;
 
   private boolean mSymmetric;
+
+  private boolean mSymmetricLines;
 
   static final int LINE_MODE = 0;
 
@@ -98,55 +100,59 @@ class Foliage extends Being {
     return this;
   }
 
-  Foliage initGrill() {
+  //Foliage initGrill() {
 
-    final int numberOfLines = (int) random(NUM_OF_INITIAL_NODES);
+  //  final int numberOfLines = (int) random(NUM_OF_INITIAL_NODES / 4);
 
-    final int numberOfNodesPerLine = NUM_OF_INITIAL_NODES / numberOfLines;
+  //  final int numberOfNodesPerLine = NUM_OF_INITIAL_NODES / numberOfLines;
 
-    final float lineSpacing = width / numberOfLines * 0.9f;
+  //  final float lineSpacing = width / numberOfLines * 0.9f;
 
-    final float lineStart = 50f;
+  //  final float lineStart = 50f;
 
-    final float lineLength = height - 100f;
+  //  final float lineLength = height - 100f;
 
-    Node lastNode = null;
+  //  Node lastNode = null;
 
-    //println("Foliage: initGrill(): ------");
+  //  //println("Foliage: initGrill(): ------");
 
-    for (int i = 0; i < NUM_OF_INITIAL_NODES; i++) {
-      final Node node = new Node();
+  //  for (int i = 0; i < NUM_OF_INITIAL_NODES; i++) {
+  //    final Node node = new Node();
 
-      final int line = i / numberOfNodesPerLine;
+  //    final int line = i / numberOfNodesPerLine;
 
-      node.mX = lineStart + (lineSpacing * line);
+  //    node.mX = lineStart + (lineSpacing * line);
 
-      final float relativeDistanceFromLineStart;
-      relativeDistanceFromLineStart = (float) ((i + 1f) - (numberOfNodesPerLine * line)) / (float) numberOfNodesPerLine;
-      final float distanceFromLineStart = lineLength * relativeDistanceFromLineStart;
+  //    final float relativeDistanceFromLineStart;
+  //    relativeDistanceFromLineStart = (float) ((i + 1f) - (numberOfNodesPerLine * line)) / (float) numberOfNodesPerLine;
+  //    final float distanceFromLineStart = lineLength * relativeDistanceFromLineStart;
 
-      if (line % 2 == 0) {
-        node.mY = lineStart + distanceFromLineStart;
-      } else {
-        node.mY = lineStart + lineLength - distanceFromLineStart;
-      }
+  //    if (line % 2 == 0) {
+  //      node.mY = lineStart + distanceFromLineStart;
+  //    } else {
+  //      node.mY = lineStart + lineLength - distanceFromLineStart;
+  //    }
 
-      if (mFirstNode == null) {
-        mFirstNode = node;
-        lastNode = node;
-      } else if (i == NUM_OF_INITIAL_NODES - 1) {  // Last node:
-        mPreferredNeighbourDistance = node.distanceToNode(lastNode);
-        lastNode.mNext = node;
-      } else {
-        lastNode.mNext = node;
-        lastNode = node;
-      }
-    }
-    return this;
-  }
+  //    if (mFirstNode == null) {
+  //      mFirstNode = node;
+  //      lastNode = node;
+  //    } else if (i == NUM_OF_INITIAL_NODES - 1) {  // Last node:
+  //      mPreferredNeighbourDistance = node.distanceToNode(lastNode);
+  //      lastNode.mNext = node;
+  //    } else {
+  //      lastNode.mNext = node;
+  //      lastNode = node;
+  //    }
+  //  }
+  //  return this;
+  //}
 
   void setSymmetric(final boolean symmetric) {
     mSymmetric = symmetric;
+  }
+
+  void setSymmetricLines(final boolean symmetricLines) {
+    mSymmetricLines = symmetricLines;
   }
 
   void setRectMode(final int paintMode) {
@@ -168,71 +174,44 @@ class Foliage extends Being {
     Node nextNode;
     int nodeCounter = 0;
 
-    beginShape();
-    if (!mSymmetric) {
-      vertex(currentNode.mX, currentNode.mY);
-    }
-
-    do {
-      nextNode = currentNode.mNext;
-      if (nextNode == null) {
-        break;
-      }
-
-      currentNode.update();
-
-      if (nodeCounter < ADD_NODE_LIMIT && (++nodeCounter % mNodeDensity == 0)) {
-        addNodeNextTo(currentNode);
-      }
-
-      if ((int) random(20) % 20 == 0) {
-        final float nodeRadius = random(mNodeRadius * 2f);
-        ellipse(currentNode.mX, currentNode.mY, nodeRadius, nodeRadius);
-      }
-
-      if (mSymmetric) {
-        drawSymmetric(currentNode, c);
+    for (int i = 0; i < 2; i++) {
+      beginShape();
+      if (i == 0) {
+        vertex(currentNode.mX, currentNode.mY);
       } else {
-        vertex(nextNode.mX, nextNode.mY);
+        vertex(width - currentNode.mX, currentNode.mY);
       }
 
-      currentNode = nextNode;
-    } while (!mStopped && currentNode != mFirstNode);
+      do {
+        nextNode = currentNode.mNext;
+        if (nextNode == null) {
+          break;
+        }
 
-    if (!mSymmetric) {
+        currentNode.update();
+
+        if (nodeCounter < ADD_NODE_LIMIT && (++nodeCounter % mNodeDensity == 0)) {
+          addNodeNextTo(currentNode);
+        }
+
+        if ((int) random(20) % 20 == 0) {
+          final float nodeRadius = random(mNodeRadius * 2f);
+          ellipse(currentNode.mX, currentNode.mY, nodeRadius, nodeRadius);
+        }
+
+        if (i == 0) {
+          vertex(nextNode.mX, nextNode.mY);
+        } else {
+          vertex(width - nextNode.mX, nextNode.mY);
+        }
+        currentNode = nextNode;
+      } while (!mStopped && currentNode != mFirstNode);
+
       endShape();
-
-      //if (!mPaintedInitialFilling) {
-      //  final int lastAlpha = paint.getAlpha();
-      //  paint.setStyle(Paint.Style.FILL);
-      //  paint.setAlpha(INITIAL_FILLING_ALPHA);
-      //  canvas.drawPath(path, paint);
-
-      //  paint.setAlpha(lastAlpha);
-      //  paint.setStyle(Paint.Style.STROKE);
-
-      //  mPaintedInitialFilling = true;
-      //} else {
-      //canvas.drawPath(path, paint);
-      //}
     }
-
     return true;
   }
 
-  private void drawImage(final Node node) {
-    image(mImage, node.mX, node.mY);
-  }
-
-  private void drawSymmetric(final Node node, final color c) {
-    point((int) node.mX, (int) node.mY);
-    //point((int) node.mX, (int) node.mY + 1);
-    //point((int) node.mX + 1, (int) node.mY + 1);
-
-    point((int) (mDisplaySize - node.mX), (int) node.mY);
-    //point((int) (mCanvasSize - node.mX), (int) node.mY + 1);
-    //point((int) (mCanvasSize - node.mX + 1), (int) node.mY + 1);
-  }
 
   private void addNodeNextTo(final Node node) {
     final Node oldNeighbour = node.mNext;

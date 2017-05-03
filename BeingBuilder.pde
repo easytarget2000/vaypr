@@ -1,6 +1,6 @@
 interface BeingBuilder {
 
-  Being build(final float x, final float y);
+  Being build();
 
   int getRecommendedAlpha();
 
@@ -18,7 +18,8 @@ class FoliageBuilder implements BeingBuilder {
   private int mPaintMode;
 
   FoliageBuilder() {
-    mSymmetric = (int) random(3) % 2 == 0;
+    //mSymmetric = (int) random(3) % 2 == 0;
+    mSymmetric = true;
 
     if ((int) random(2) % 2 == 0) {
       mPaintMode = Foliage.LINE_MODE;
@@ -27,14 +28,13 @@ class FoliageBuilder implements BeingBuilder {
     }
   }
 
-  Being build(final float x, final float y) {
+  Being build() {
 
     final Foliage foliage = new Foliage();
     foliage.setSymmetric(mSymmetric);
     foliage.setRectMode(mPaintMode);
     switch ((int) random(5)) {
-    //case 0:
-      //foliage.initGrill();
+      //case 0:
     default:
       foliage.initCircle();
     }
@@ -48,7 +48,7 @@ class FoliageBuilder implements BeingBuilder {
   }
 
   int getRecommendedMaxNumber() {
-    return 1; // /DEBUG;
+    return 3;
   }
 }
 
@@ -58,7 +58,7 @@ class FoliageBuilder implements BeingBuilder {
 
 class FlowerStickBuilder implements BeingBuilder {
 
-  Being build(final float x, final float y) {
+  Being build() {
     return new FlowerStick();
   }
 
@@ -77,8 +77,7 @@ class FlowerStickBuilder implements BeingBuilder {
 
 class RadarCollectionBuilder implements BeingBuilder {
 
-  Being build(final float x, final float y) {
-    final int displaySize = max(displayWidth, displayHeight);
+  Being build() {
     return new RadarCollection();
   }
 
@@ -104,7 +103,7 @@ class BambooTilesBuilder implements BeingBuilder {
     mTileSize = displaySize / (10f + (float) floor(random(10)));
   }
 
-  public Being build(float x, float y) {
+  public Being build() {
     return new BambooTile(mTileSize, true);
   }
 
@@ -114,5 +113,27 @@ class BambooTilesBuilder implements BeingBuilder {
 
   public int getRecommendedMaxNumber() {
     return 64;
+  }
+}
+
+/**
+ *
+ */
+
+class LineCollectionBuilder implements BeingBuilder {
+
+  //private LineCollectionMode mMode = LineCollectionMode.values()[(int)random(LineCollectionMode.values().length)];
+  private LineCollectionMode mMode = LineCollectionMode.BALL_O_WOOL;
+
+  public Being build() {
+    return new LineCollection(mMode);
+  }
+
+  public int getRecommendedAlpha() {
+    return 32;
+  }
+
+  public int getRecommendedMaxNumber() {
+    return mMode == LineCollectionMode.BALL_O_WOOL ? 8 : 3;
   }
 }
