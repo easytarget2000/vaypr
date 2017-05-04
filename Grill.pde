@@ -1,4 +1,4 @@
-class Grill extends Being { //<>// //<>// //<>//
+class Grill extends Being { //<>// //<>// //<>// //<>// //<>//
 
   private static final int MAX_AGE = 128;
 
@@ -7,6 +7,8 @@ class Grill extends Being { //<>// //<>// //<>//
   private int mNumberOfLines = 16 + (int) random(24);
 
   private int mAgePerLine = (int) ceil((float) (MAX_AGE - 2) / (float) mNumberOfLines);
+
+  private boolean mDrawCircles;
 
   private float mInset = width * 0.1f;
 
@@ -19,8 +21,11 @@ class Grill extends Being { //<>// //<>// //<>//
   private float mXStepSize = width * 1.25f / mNumberOfLines; 
 
   private float mYStepSize = mLineLength / (float) mAgePerLine;
+  
+  private float mCircleSize = random(width * 0.05f);
 
-  Grill() {
+  Grill(final boolean drawCircles) {
+    mDrawCircles = drawCircles;
     //println("Grill: (): mNumberOfLines: " + mNumberOfLines);
     //println("Grill: (): mAgePerLine: " + mAgePerLine);
     //println("Grill: (): mYStepSize: " + mYStepSize);
@@ -40,7 +45,11 @@ class Grill extends Being { //<>// //<>// //<>//
         mLastY = mInset;
       }
 
-      line(mLastX, mLastY + 1, mLastX += getJitter(), mLastY += mYStepSize);
+      if (mDrawCircles) {
+        ellipse(mLastX += getJitter(), mLastY += mYStepSize, mCircleSize, mCircleSize);
+      } else {
+        line(mLastX, mLastY + 1, mLastX += getJitter(), mLastY += mYStepSize);
+      }
     }
 
     return mAge <= MAX_AGE;

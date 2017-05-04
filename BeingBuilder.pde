@@ -32,8 +32,10 @@ class FoliageBuilder implements BeingBuilder {
 
     final Foliage foliage = new Foliage();
 
-    switch ((int) random(5)) {
-      //case 0:
+    switch ((int) random(4)) {
+    case 0:
+      foliage.initLine();
+      break;
     default:
       foliage.initCircle();
     }
@@ -42,7 +44,7 @@ class FoliageBuilder implements BeingBuilder {
   }
 
   int getRecommendedAlpha() {
-    return mSymmetric ? 100 : 16;
+    return 10;
   }
 
   int getRecommendedMaxNumber() {
@@ -137,12 +139,15 @@ class LineCollectionBuilder implements BeingBuilder {
 }
 
 /**
-*
-*/
+ *
+ */
 
 class GrillBuilder implements BeingBuilder {
+
+  private boolean mDrawCircles = (int) random(2) % 2 == 0;
+
   public Being build() {
-    return new Grill();
+    return new Grill(mDrawCircles);
   }
 
   public int getRecommendedAlpha() {
@@ -151,5 +156,26 @@ class GrillBuilder implements BeingBuilder {
 
   public int getRecommendedMaxNumber() {
     return 12;
+  }
+}
+
+/**
+ *
+ */
+
+class SnailBuilder implements BeingBuilder {
+
+  private float mCircleRadius = (width * 0.05f) + random(width * 0.05f);
+
+  public Being build() {
+    return new Snail(mCircleRadius);
+  }
+
+  public int getRecommendedAlpha() {
+    return 32;
+  }
+
+  public int getRecommendedMaxNumber() {
+    return 8;
   }
 }

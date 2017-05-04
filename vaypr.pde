@@ -27,6 +27,8 @@ private boolean mDrawOverlayImage = true;
 
 private PImage mOverlayImage;
 
+private float mOverlayImageSize;
+
 private color mColor = 0xffffffff;
 
 private float mBpm = 130f;
@@ -50,6 +52,7 @@ void setup() {
   //size(800, 600);
 
   mOverlayImage = loadImage("mnq.png");
+  mOverlayImageSize = width / 16f;
 
   resetBackdropBeings();
   resetScreenWithBackdrop();
@@ -142,7 +145,7 @@ private void resetBackdropBeings() {
 }
 
 private void setRandomBeingBuilder() {
-  switch((int) random(9)) {
+  switch((int) random(10)) {
   case 0:
     mBeingBuilder = new RadarCollectionBuilder();
     break;
@@ -155,13 +158,16 @@ private void setRandomBeingBuilder() {
   case 3:  
     mBeingBuilder = new GrillBuilder();
     break;
+  case 4:
+    mBeingBuilder = new LineCollectionBuilder();
+    break;
+  case 5:
+    mBeingBuilder = new SnailBuilder();
+    break;
   default:
     mBeingBuilder = new FoliageBuilder();
   }
-}
 
-private void setDrawOverlayImage() {
-  //mDrawOverlayImage = (int) (random(2) % 2) == 0;
 }
 
 private void handleTap() {
@@ -270,14 +276,16 @@ private void countBeats() {
     }
 
     if (mCurrentBeat % 32 == 0) {
+    }
+
+    if (mCurrentBeat % 64 == 0) {
       setRandomBeingBuilder();
-      setDrawOverlayImage();
     }
   }
 }
 
 private void resetBeats() {
-  mCurrentBeat = 0;
+  mCurrentBeat = mCurrentBeat + (mCurrentBeat % 4);
   mLastBeatMillis = 0;
 }
 
@@ -289,6 +297,10 @@ private void addBeing() {
   final float x = random(displayWidth);
   final float y = random(displayHeight);
   mBeings.add(mBeingBuilder.build());
+}
+
+private void setDrawOverlayImage() {
+  mDrawOverlayImage = (int) random(3) != 1;
 }
 
 private void setRandomColor() {

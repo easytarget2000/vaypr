@@ -2,45 +2,32 @@ class Foliage extends Being {
 
   private static final int NUM_OF_INITIAL_NODES = 64;
 
-  private static final int MAX_AGE = 256;
+  private static final int MAX_AGE = 160;
 
-  private static final int ADD_NODE_LIMIT = 16;
+  private static final int ADD_NODE_LIMIT = 20;
 
-  private static final float PUSH_FORCE = 4f;
+  private static final float PUSH_FORCE = 32f;
 
   private Node mFirstNode;
 
-  private float mDisplaySize;
+  private float mDisplaySize = max(width, height);
 
   static final int LINE_MODE = 0;
 
-  private float mNodeDensity;
+  private float mNodeDensity = (int) (NUM_OF_INITIAL_NODES / 16f);
 
-  private float mNodeRadius;
+  private float mNodeRadius = mDisplaySize / 300f;
 
-  private float mNeighbourGravity;
+  private float mNeighbourGravity = mNodeRadius * 0.5f;
 
   private float mPreferredNeighbourDistance;
 
-  private float mMaxPushDistance;
+  private float mMaxPushDistance = mDisplaySize * 0.1f;
 
-  //    private NewNode mSpecialNode;
+  private boolean mDrawBezier = false;
 
   Foliage() {
-    mDisplaySize = max(displayWidth, displayHeight);
-    final float nodeSize = mDisplaySize / 300f;
-    mNodeRadius = nodeSize * 0.5f;
-    mNodeDensity = (int) random(NUM_OF_INITIAL_NODES);
-    mNeighbourGravity = mNodeRadius * 0.5f;
-    mMaxPushDistance = mDisplaySize * 0.1f;
-    mJitter = mDisplaySize * 0.002f;
-
-    //Log.d(
-    //  TAG, 
-    //  "Initialized: node size: " + nodeSize
-    //  + ", rect mode: " + mPaintMode
-    //  + ", node density: " + mNodeDensity
-    //  );
+    //mJitter = mDisplaySize * 0.002f;
   }
 
   Foliage initCircle() {
@@ -84,6 +71,32 @@ class Foliage extends Being {
     return this;
   }
 
+  Foliage initLine() {
+    mDrawBezier = true;
+
+    Node lastNode = null;
+
+    for (int i = 0; i < NUM_OF_INITIAL_NODES; i++) {
+      final Node node = new Node();
+
+      node.mX = ((float) i / (float) NUM_OF_INITIAL_NODES * width) + getJitter();
+      node.mY = mStartY + getJitter();
+
+      if (mFirstNode == null) {
+        mFirstNode = node;
+        lastNode = node;
+      } else if (i == NUM_OF_INITIAL_NODES - 1) {
+        mPreferredNeighbourDistance = node.distanceToNode(lastNode);
+        lastNode.mNext = node;
+      } else {
+        lastNode.mNext = node;
+        lastNode = node;
+      }
+    }
+
+    return this;
+  }
+
   boolean drawIfAlive(final color c) {
 
     if (++mAge > MAX_AGE) {
@@ -95,48 +108,59 @@ class Foliage extends Being {
     noFill();
     stroke(c);
 
-    Node currentNode = mFirstNode;
-    Node nextNode;
+    final float[] x = new float[4];
+    final float[] y = new float[4];
+
     int nodeCounter = 0;
 
-    for (int i = 0; i < 2; i++) {
-      beginShape();
-      if (i == 0) {
-        vertex(currentNode.mX, currentNode.mY);
-      } else {
-        vertex(width - currentNode.mX, currentNode.mY);
+    Node currentNode = mFirstNode;
+    x[0] = currentNode.mX;
+    y[0] = currentNode.mY;
+
+    Node nextNode;
+
+    do {
+      nextNode = currentNode.mNext;
+      if (nextNode == null) {
+        break;
       }
 
-      do {
-        nextNode = currentNode.mNext;
-        if (nextNode == null) {
-          break;
-        }
+      currentNode.update();
 
-        currentNode.update();
+      if (nodeCounter < ADD_NODE_LIMIT && (nodeCounter % mNodeDensity == 0)) {
+        addNodeNextTo(currentNode);
+      }
 
-        if (nodeCounter < ADD_NODE_LIMIT && (++nodeCounter % mNodeDensity == 0)) {
-          addNodeNextTo(currentNode);
-        }
+      final int bezierIndex = (nodeCounter % 4) + 1;
 
-        if ((int) random(20) % 20 == 0) {
-          final float nodeRadius = random(mNodeRadius * 2f);
-          ellipse(currentNode.mX, currentNode.mY, nodeRadius, nodeRadius);
-        }
+      if (bezierIndex == 4) {
+        bezier(
+          x[0], y[0], 
+          x[1], y[1], 
+          x[2], y[2], 
+          x[3], y[3]
+          );
+        //line(x[0], y[0], x[3], y[3]);
 
-        if (i == 0) {
-          vertex(nextNode.mX, nextNode.mY);
-        } else {
-          vertex(width - nextNode.mX, nextNode.mY);
-        }
-        currentNode = nextNode;
-      } while (!mStopped && currentNode != mFirstNode);
+        bezier(
+          width - x[0], y[0], 
+          width - x[1], y[1], 
+          width - x[2], y[2], 
+          width - x[3], y[3]
+          );
 
-      endShape();
-    }
+        x[0] = x[3];
+        y[0] = y[3] + 1;
+      } else {
+        x[bezierIndex] = currentNode.mX;
+        y[bezierIndex] = currentNode.mY;
+      }
+
+      currentNode = nextNode;
+      ++nodeCounter;
+    } while (!mStopped && currentNode != mFirstNode);
     return true;
   }
-
 
   private void addNodeNextTo(final Node node) {
     final Node oldNeighbour = node.mNext;
