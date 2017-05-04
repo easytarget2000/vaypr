@@ -3,8 +3,6 @@ class FlowerStick extends Being {
 
   private static final int NUM_OF_INITIAL_NODES = 48;
 
-  private float mDisplayHeight;
-
   private boolean mGrowing = true;
 
   private Branch[] mBranches;
@@ -16,13 +14,13 @@ class FlowerStick extends Being {
   private float mLastLineY;
 
   FlowerStick() {
-    mJitter = mDisplayHeight * 0.001f;
+    mJitter = height * 0.001f;
     mLastLineX = (float) mStartX;
-    mLastLineY = (float) mDisplayHeight;
+    mLastLineY = height;
   }
 
   boolean drawIfAlive(final color c) {
-    final float currentY = (float) mDisplayHeight - mAge;
+    final float currentY = (float) height - mAge;
 
     if (currentY < mStartY) {
 
@@ -33,13 +31,13 @@ class FlowerStick extends Being {
         final int numberOfPods = (int) random(64 - 16) + 16;
 
         final float sharedLength = random(
-          mDisplayHeight / 3f * (numberOfPods / 64f)
-        );
+          height / 3f * (numberOfPods / 64f)
+          );
 
         for (int i = 0; i < numberOfBranches; i++) {
           final float angle;
-          angle = (TWO_PI * ((i + 1.0) / numberOfBranches)) + random(TWO_PI / 90);
-          final float length = sharedLength + random(mDisplayHeight / 100.0);
+          angle = (TWO_PI * ((i + 1f) / numberOfBranches)) + random(TWO_PI / 90f);
+          final float length = sharedLength + random(height / 100f);
 
           mBranches[i] = new Branch(angle, length);
         }
@@ -53,9 +51,7 @@ class FlowerStick extends Being {
       }
 
       if (!somethingGrew) {
-        
       }
-     
     } else {
       final float newLineX = (float) (mStartX + getJitter());
       line(
@@ -63,12 +59,12 @@ class FlowerStick extends Being {
         mLastLineY, 
         newLineX, 
         currentY
-      );
+        );
       mLastLineX = newLineX;
       mLastLineY = currentY;
     }
 
-    mAge += (int) random(mDisplayHeight / 32f);
+    mAge += (int) random(height / 32f);
 
     return mGrowing;
   }
@@ -89,14 +85,14 @@ class FlowerStick extends Being {
 
     private Branch(final float angle, final float length) {
       mFinalLength = length;
-      mSpeed = random(mDisplayHeight * 0.01f);
+      mSpeed = random(height * 0.01f);
       mAngle = angle;
-      mMaxPodRadius = random(mDisplayHeight * 0.01f);
+      mMaxPodRadius = random(height * 0.01f);
       mNumberOfPodsLeft = (int) random(9);
     }
 
     private boolean drawAndUpdate(final color c) {
-
+      noFill();
       final float x = mStartX + (cos(mAngle) * mCurrentLength);
       final float y = mStartY + (sin(mAngle) * mCurrentLength);
 

@@ -3,13 +3,15 @@ private static final boolean VERBOSE = true;
 
 private static final char TAP_KEY = ' ';
 
-private static final char CHANGE_MODE_KEY = 'q';
+private static final char CLEAR_KEY = 'x';
+
+private static final char CHANGE_MODE_KEY = 'm';
 
 private static final char DECREASE_HEAT_KEY = 's';
 
 private static final char INCREASE_HEAT_KEY = 'w';
 
-private static final char ADD_BACKDROP_BEING_KEY = 't' ;
+private static final char ADD_BACKDROP_BEING_KEY = 'q' ;
 
 private static final int TAP_RESET_INTERVAL_MILLIS = 1500;
 
@@ -89,6 +91,9 @@ void keyPressed() {
     resetScreenWithBackdrop();
     handleTap();
     break;
+  case CLEAR_KEY:
+    resetScreenWithBackdrop();
+    break;
 
   case CHANGE_MODE_KEY:
     setRandomBeingBuilder();
@@ -124,7 +129,9 @@ private void resetScreenWithBackdrop() {
 
 private void addBackdropBeing() {
   //mBackdropBeings.add(new BackdropTriangle());
-  mBackdropBeings.add(new ImageBeing());
+  final Being newBackdropBeing = new ImageBeing();
+  mBackdropBeings.add(newBackdropBeing);
+  newBackdropBeing.drawIfAlive(0);
 }
 
 private void resetBackdropBeings() {
@@ -135,7 +142,7 @@ private void resetBackdropBeings() {
 }
 
 private void setRandomBeingBuilder() {
-  switch((int) random(5)) {
+  switch((int) random(9)) {
   case 0:
     mBeingBuilder = new RadarCollectionBuilder();
     break;
@@ -145,10 +152,12 @@ private void setRandomBeingBuilder() {
   case 2:
     mBeingBuilder = new BambooTilesBuilder();
     break;
+  case 3:  
+    mBeingBuilder = new GrillBuilder();
+    break;
   default:
     mBeingBuilder = new FoliageBuilder();
   }
-
 }
 
 private void setDrawOverlayImage() {
@@ -159,9 +168,13 @@ private void handleTap() {
 
   resetBeats();
 
-  if (millis() - mLastKeyPressMillis > TAP_RESET_INTERVAL_MILLIS) {
+  final int millisSinceLastTap = millis() - mLastKeyPressMillis;
+
+  if (millisSinceLastTap > TAP_RESET_INTERVAL_MILLIS) {
     mTaps = new ArrayList<Integer>();
     println("main: handleTap(): mBeatLenghtMillis: Resetting.");
+  } else if (millisSinceLastTap < 300) {
+    return;
   }
 
   mLastKeyPressMillis = millis();

@@ -31,15 +31,13 @@ class FoliageBuilder implements BeingBuilder {
   Being build() {
 
     final Foliage foliage = new Foliage();
-    foliage.setSymmetric(mSymmetric);
-    foliage.setRectMode(mPaintMode);
+
     switch ((int) random(5)) {
       //case 0:
     default:
       foliage.initCircle();
     }
 
-    foliage.setImage(loadImage("q02.png"));
     return foliage;
   }
 
@@ -135,5 +133,23 @@ class LineCollectionBuilder implements BeingBuilder {
 
   public int getRecommendedMaxNumber() {
     return mMode == LineCollectionMode.BALL_O_WOOL ? 8 : 3;
+  }
+}
+
+/**
+*
+*/
+
+class GrillBuilder implements BeingBuilder {
+  public Being build() {
+    return new Grill();
+  }
+
+  public int getRecommendedAlpha() {
+    return 64;
+  }
+
+  public int getRecommendedMaxNumber() {
+    return 12;
   }
 }

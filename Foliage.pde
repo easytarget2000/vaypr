@@ -2,9 +2,9 @@ class Foliage extends Being {
 
   private static final int NUM_OF_INITIAL_NODES = 64;
 
-  private static final int MAX_AGE = 360;
+  private static final int MAX_AGE = 256;
 
-  private static final int ADD_NODE_LIMIT = 32;
+  private static final int ADD_NODE_LIMIT = 16;
 
   private static final float PUSH_FORCE = 4f;
 
@@ -12,17 +12,7 @@ class Foliage extends Being {
 
   private float mDisplaySize;
 
-  private boolean mSymmetric;
-
-  private boolean mSymmetricLines;
-
   static final int LINE_MODE = 0;
-
-  private int mPaintMode;
-
-  private PImage mImage;
-
-  private boolean mChangeAlpha = false;
 
   private float mNodeDensity;
 
@@ -34,15 +24,13 @@ class Foliage extends Being {
 
   private float mMaxPushDistance;
 
-  private boolean mPaintedInitialFilling = false;
-
   //    private NewNode mSpecialNode;
 
   Foliage() {
     mDisplaySize = max(displayWidth, displayHeight);
     final float nodeSize = mDisplaySize / 300f;
     mNodeRadius = nodeSize * 0.5f;
-    mNodeDensity = 1 + random(10);
+    mNodeDensity = (int) random(NUM_OF_INITIAL_NODES);
     mNeighbourGravity = mNodeRadius * 0.5f;
     mMaxPushDistance = mDisplaySize * 0.1f;
     mJitter = mDisplaySize * 0.002f;
@@ -53,10 +41,6 @@ class Foliage extends Being {
     //  + ", rect mode: " + mPaintMode
     //  + ", node density: " + mNodeDensity
     //  );
-  }
-
-  void setImage(final PImage image) {
-    mImage = image;
   }
 
   Foliage initCircle() {
@@ -98,65 +82,6 @@ class Foliage extends Being {
     }
 
     return this;
-  }
-
-  //Foliage initGrill() {
-
-  //  final int numberOfLines = (int) random(NUM_OF_INITIAL_NODES / 4);
-
-  //  final int numberOfNodesPerLine = NUM_OF_INITIAL_NODES / numberOfLines;
-
-  //  final float lineSpacing = width / numberOfLines * 0.9f;
-
-  //  final float lineStart = 50f;
-
-  //  final float lineLength = height - 100f;
-
-  //  Node lastNode = null;
-
-  //  //println("Foliage: initGrill(): ------");
-
-  //  for (int i = 0; i < NUM_OF_INITIAL_NODES; i++) {
-  //    final Node node = new Node();
-
-  //    final int line = i / numberOfNodesPerLine;
-
-  //    node.mX = lineStart + (lineSpacing * line);
-
-  //    final float relativeDistanceFromLineStart;
-  //    relativeDistanceFromLineStart = (float) ((i + 1f) - (numberOfNodesPerLine * line)) / (float) numberOfNodesPerLine;
-  //    final float distanceFromLineStart = lineLength * relativeDistanceFromLineStart;
-
-  //    if (line % 2 == 0) {
-  //      node.mY = lineStart + distanceFromLineStart;
-  //    } else {
-  //      node.mY = lineStart + lineLength - distanceFromLineStart;
-  //    }
-
-  //    if (mFirstNode == null) {
-  //      mFirstNode = node;
-  //      lastNode = node;
-  //    } else if (i == NUM_OF_INITIAL_NODES - 1) {  // Last node:
-  //      mPreferredNeighbourDistance = node.distanceToNode(lastNode);
-  //      lastNode.mNext = node;
-  //    } else {
-  //      lastNode.mNext = node;
-  //      lastNode = node;
-  //    }
-  //  }
-  //  return this;
-  //}
-
-  void setSymmetric(final boolean symmetric) {
-    mSymmetric = symmetric;
-  }
-
-  void setSymmetricLines(final boolean symmetricLines) {
-    mSymmetricLines = symmetricLines;
-  }
-
-  void setRectMode(final int paintMode) {
-    mPaintMode = paintMode;
   }
 
   boolean drawIfAlive(final color c) {
