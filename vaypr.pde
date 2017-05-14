@@ -23,7 +23,7 @@ private ArrayList<Being> mBeings = new ArrayList<Being>();
 
 private ArrayList<Being> mBackdropBeings = new ArrayList<Being>();
 
-private boolean mDrawOverlayImage = true;
+private boolean mDrawOverlayImage = false;
 
 private PImage mOverlayImage;
 
@@ -35,6 +35,8 @@ private float mBpm = 130f;
 
 //private int mBeatLengthMillis = (int) (60f * 1000f / mBpm);
 private int mBeatLengthMillis = 500;
+
+private boolean mDrawFrameRate = true;
 
 private int mLastBeatMillis = 0;
 
@@ -48,8 +50,8 @@ private ArrayList<Integer> mTaps = new ArrayList<Integer>();
 
 void setup() {
   //fullScreen(2);
-  fullScreen();
-  //size(800, 600);
+  //fullScreen();
+  size(1920, 1080);
 
   mOverlayImage = loadImage("mnq.png");
   mOverlayImageSize = width / 16f;
@@ -58,6 +60,7 @@ void setup() {
   resetScreenWithBackdrop();
 
   setRandomBeingBuilder();
+  setRandomColor();
 
   final int numberOfInitialBeings = (mBeingBuilder.getRecommendedMaxNumber() / 2);
   for (int i = 0; i < numberOfInitialBeings; i++) {
@@ -82,6 +85,16 @@ void draw() {
     final float imageX = (width / 2f) - (mOverlayImage.width / 2f);
     final float imageY = (height / 2f) - (mOverlayImage.height / 2f);
     image(mOverlayImage, imageX, imageY);
+  }
+
+  if (mDrawFrameRate) {
+    fill(0);
+    noStroke();
+    rect(8, 8, 64, 24);
+
+    stroke(0xFFFFFFFF);
+    fill(0xFFFFFFFF);
+    text(floor(frameRate) + "fps", 10, 20);
   }
 }
 
@@ -131,10 +144,9 @@ private void resetScreenWithBackdrop() {
 }
 
 private void addBackdropBeing() {
-  //mBackdropBeings.add(new BackdropTriangle());
-  final Being newBackdropBeing = new ImageBeing();
-  mBackdropBeings.add(newBackdropBeing);
-  newBackdropBeing.drawIfAlive(0);
+  //final Being newBackdropBeing = new ImageBeing();
+  //mBackdropBeings.add(newBackdropBeing);
+  //newBackdropBeing.drawIfAlive(0);
 }
 
 private void resetBackdropBeings() {
@@ -145,29 +157,29 @@ private void resetBackdropBeings() {
 }
 
 private void setRandomBeingBuilder() {
-  switch((int) random(10)) {
-  case 0:
-    mBeingBuilder = new RadarCollectionBuilder();
-    break;
-  case 1:
-    mBeingBuilder = new FlowerStickBuilder();
-    break;
-  case 2:
-    mBeingBuilder = new BambooTilesBuilder();
-    break;
-  case 3:  
-    mBeingBuilder = new GrillBuilder();
-    break;
-  case 4:
-    mBeingBuilder = new LineCollectionBuilder();
-    break;
-  case 5:
-    mBeingBuilder = new SnailBuilder();
-    break;
-  default:
-    mBeingBuilder = new FoliageBuilder();
-  }
-
+  //switch((int) random(10)) {
+  //case 0:
+  //  mBeingBuilder = new RadarCollectionBuilder();
+  //  break;
+  //case 1:
+  //  mBeingBuilder = new FlowerStickBuilder();
+  //  break;
+  //case 2:
+  //  mBeingBuilder = new BambooTilesBuilder();
+  //  break;
+  //case 3:  
+  //  mBeingBuilder = new GrillBuilder();
+  //  break;
+  //case 4:
+  //  mBeingBuilder = new LineCollectionBuilder();
+  //  break;
+  //case 5:
+  //  mBeingBuilder = new SnailBuilder();
+  //  break;
+  //default:
+  //  mBeingBuilder = new FoliageBuilder();
+  //}
+  mBeingBuilder = new FoliageBuilder();
 }
 
 private void handleTap() {

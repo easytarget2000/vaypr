@@ -44,7 +44,7 @@ class FoliageBuilder implements BeingBuilder {
   }
 
   int getRecommendedAlpha() {
-    return 10;
+    return 24;
   }
 
   int getRecommendedMaxNumber() {

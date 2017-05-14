@@ -4,9 +4,9 @@ class Foliage extends Being {
 
   private static final int MAX_AGE = 160;
 
-  private static final int ADD_NODE_LIMIT = 20;
+  private static final int ADD_NODE_LIMIT = 32;
 
-  private static final float PUSH_FORCE = 32f;
+  private static final float PUSH_FORCE = 2f;
 
   private Node mFirstNode;
 
@@ -22,7 +22,7 @@ class Foliage extends Being {
 
   private float mPreferredNeighbourDistance;
 
-  private float mMaxPushDistance = mDisplaySize * 0.1f;
+  private float mMaxPushDistance = mDisplaySize * 0.03f;
 
   private boolean mDrawBezier = false;
 
@@ -254,8 +254,10 @@ class Foliage extends Being {
           }
         }
 
-        mX += cos(angle) * force;
-        mY += sin(angle) * force;
+        if (force < 64) {
+          mX += cos(angle) * force;
+          mY += sin(angle) * force;
+        }
 
         otherNode = otherNode.mNext;
       } while (!mStopped);
