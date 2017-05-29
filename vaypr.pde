@@ -179,7 +179,8 @@ private void setRandomBeingBuilder() {
   //default:
   //  mBeingBuilder = new FoliageBuilder();
   //}
-  mBeingBuilder = new FoliageBuilder();
+
+  mBeingBuilder = new HolodeckBuilder();
 }
 
 private void handleTap() {
@@ -241,13 +242,15 @@ private void increaseHeat() {
 }
 
 private void adjustColorForHeat() {
-  if (mBeatMultipleToTrigger == 1) {
-    setRandomColorWithAlpha(mBeingBuilder.getRecommendedAlpha() * 3);
-  } else if (mBeatMultipleToTrigger == 2) {
-    setRandomColorWithAlpha((int) (mBeingBuilder.getRecommendedAlpha() * 1.5f));
-  } else {
-    setRandomColor();
-  }
+  setRandomColorWithAlpha((int) (mBeingBuilder.getRecommendedAlpha() * 0.2));
+
+  //if (mBeatMultipleToTrigger == 1) {
+  //  setRandomColorWithAlpha(mBeingBuilder.getRecommendedAlpha() * 3);
+  //} else if (mBeatMultipleToTrigger == 2) {
+  //  setRandomColorWithAlpha((int) (mBeingBuilder.getRecommendedAlpha() * 1.5f));
+  //} else {
+  //  setRandomColor();
+  //}
 }
 
 private void countBeats() {
@@ -306,9 +309,13 @@ private void addBeing() {
     return;
   }
 
-  final float x = random(displayWidth);
-  final float y = random(displayHeight);
-  mBeings.add(mBeingBuilder.build());
+  for (int i = 0; i < 3; i++) {
+    final float x = random(displayWidth);
+    final float y = random(displayHeight);
+    mBeings.add(mBeingBuilder.build());
+  }
+
+  resetScreenWithBackdrop();
 }
 
 private void setDrawOverlayImage() {

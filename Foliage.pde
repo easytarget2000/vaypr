@@ -2,13 +2,17 @@ class Foliage extends Being {
 
   private static final int NUM_OF_INITIAL_NODES = 64;
 
-  private static final int MAX_AGE = 160;
+  private static final int MAX_AGE = 640;
 
-  private static final int ADD_NODE_LIMIT = 32;
+  private static final int ADD_NODE_ROUND_LIMIT = 2;
+  
+  private static final int MAX_NUM_OF_NODES = 480;
 
-  private static final float PUSH_FORCE = 2f;
+  private static final float PUSH_FORCE = 4f;
 
   private Node mFirstNode;
+  
+  private int mNodeAddCounter = 0;
 
   private float mDisplaySize = max(width, height);
 
@@ -22,9 +26,7 @@ class Foliage extends Being {
 
   private float mPreferredNeighbourDistance;
 
-  private float mMaxPushDistance = mDisplaySize * 0.03f;
-
-  private boolean mDrawBezier = false;
+  private float mMaxPushDistance = mDisplaySize * 0.1f;
 
   Foliage() {
     //mJitter = mDisplaySize * 0.002f;
@@ -72,7 +74,7 @@ class Foliage extends Being {
   }
 
   Foliage initLine() {
-    mDrawBezier = true;
+    //mDrawBezier = true;
 
     Node lastNode = null;
 
@@ -127,7 +129,12 @@ class Foliage extends Being {
 
       currentNode.update();
 
-      if (nodeCounter < ADD_NODE_LIMIT && (nodeCounter % mNodeDensity == 0)) {
+      if (
+        ++mNodeAddCounter < ADD_NODE_ROUND_LIMIT
+        && nodeCounter < MAX_NUM_OF_NODES
+        && (nodeCounter % mNodeDensity == 0)
+      ) {
+        //println("addNode: " + nodeCounter);
         addNodeNextTo(currentNode);
       }
 
@@ -149,7 +156,7 @@ class Foliage extends Being {
           width - x[3], y[3]
           );
 
-        x[0] = x[3];
+        x[0] = x[3] + 1;
         y[0] = y[3] + 1;
       } else {
         x[bezierIndex] = currentNode.mX;
