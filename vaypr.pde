@@ -157,7 +157,7 @@ private void resetBackdropBeings() {
 }
 
 private void setRandomBeingBuilder() {
-
+  mBeingBuilder = new ArchitectureBuilder();
 }
 
 private void handleTap() {

@@ -8,6 +8,27 @@ interface BeingBuilder {
 }
 
 /**
+ * ArchitectureBuilder
+ */
+
+class ArchitectureBuilder implements BeingBuilder {
+
+  Being build() {
+
+    return new Architecture();
+  }
+
+  int getRecommendedAlpha() {
+    return 128;
+  }
+
+  int getRecommendedMaxNumber() {
+    return 1;
+  }
+  
+}
+
+/**
  *
  */
 
@@ -39,7 +60,7 @@ class FoliageBuilder implements BeingBuilder {
     //default:
     //  foliage.initCircle();
     //}
-    
+
     //DEBUG:
     foliage.initCircle();
 
@@ -186,18 +207,18 @@ class SnailBuilder implements BeingBuilder {
 /**
  *
  */
- 
+
 class HolodeckBuilder implements BeingBuilder {
-  
+
   public Being build() {
     return new Holodeck();
   }
-  
+
   public int getRecommendedAlpha() {
     return 16;
   }
 
   public int getRecommendedMaxNumber() {
     return 1;
-  }  
+  }
 }
