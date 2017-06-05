@@ -4,9 +4,9 @@ class Holodeck extends Being {
 
   private int mAgePerSection = MAX_AGE / 64;
 
-  private float mNumberOfColumns = floor(4 + random(8));
+  private int mNumberOfColumns = 96;//floor(16f + random(24f));
 
-  private float mNumberOfRows = floor(4 + random(8));
+  private int mNumberOfRows = ceil((float) mNumberOfColumns * 0.562f);
 
   private float mColumnDistance = width / mNumberOfColumns;
 
@@ -28,18 +28,20 @@ class Holodeck extends Being {
       return true;
     }
 
-    final float sectionAge = getSectionAge();
+    final float sectionAge = 0; //getSectionAge();
 
     //println("DEBUG: Holodeck: drawIfAlive(): sectionAge: " + sectionAge);
+background(0);
 
     noFill();
     stroke(
-        colorWithNewAlpha(c, (int) (16f * (1f - sectionAge)))
+        //colorWithNewAlpha(c, (int) (16f * (1f - sectionAge)))
+                colorWithNewAlpha(c, 255)
       );
 
-    for (float column = 0f; column < mNumberOfColumns; column += 1f) {
+    for (int column = 0; column < mNumberOfColumns; column++) {
 
-      final float columnX = column * mColumnDistance + ((sectionAge * mColumnDistance) * mHorizontalDirection);
+      final float columnX = (float) column * mColumnDistance + ((millis() / 1000f) % mColumnDistance);// + ((sectionAge * mColumnDistance) * mHorizontalDirection);
 
       line(
         columnX, 
@@ -49,8 +51,8 @@ class Holodeck extends Being {
         );
     }
 
-    for (float row = 0f; row < mNumberOfRows; row += 1f) {
-      final float rowY = row * mRowDistance + (sectionAge * mRowDistance) * mVerticalDirection;
+    for (int row = 0; row < mNumberOfRows; row++) {
+      final float rowY = (float) row * mRowDistance;// + (sectionAge * mRowDistance);// * mVerticalDirection;
       line(
         0f, 
         rowY, 

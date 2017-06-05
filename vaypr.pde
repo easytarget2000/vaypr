@@ -157,30 +157,7 @@ private void resetBackdropBeings() {
 }
 
 private void setRandomBeingBuilder() {
-  //switch((int) random(10)) {
-  //case 0:
-  //  mBeingBuilder = new RadarCollectionBuilder();
-  //  break;
-  //case 1:
-  //  mBeingBuilder = new FlowerStickBuilder();
-  //  break;
-  //case 2:
-  //  mBeingBuilder = new BambooTilesBuilder();
-  //  break;
-  //case 3:  
-  //  mBeingBuilder = new GrillBuilder();
-  //  break;
-  //case 4:
-  //  mBeingBuilder = new LineCollectionBuilder();
-  //  break;
-  //case 5:
-  //  mBeingBuilder = new SnailBuilder();
-  //  break;
-  //default:
-  //  mBeingBuilder = new FoliageBuilder();
-  //}
 
-  mBeingBuilder = new HolodeckBuilder();
 }
 
 private void handleTap() {
@@ -309,7 +286,7 @@ private void addBeing() {
     return;
   }
 
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 1; i++) {
     final float x = random(displayWidth);
     final float y = random(displayHeight);
     mBeings.add(mBeingBuilder.build());
