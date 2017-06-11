@@ -49,12 +49,12 @@ private int mLastKeyPressMillis = 0;
 private ArrayList<Integer> mTaps = new ArrayList<Integer>();
 
 void setup() {
-  //fullScreen(2);
+  fullScreen(2);
   //fullScreen();
-  size(1920, 1080);
+  //size(1920, 1080);
 
-  mOverlayImage = loadImage("mnq.png");
-  mOverlayImageSize = width / 16f;
+  //mOverlayImage = loadImage("mnq.png");
+  //mOverlayImageSize = width / 16f;
 
   resetBackdropBeings();
   resetScreenWithBackdrop();
@@ -157,7 +157,7 @@ private void resetBackdropBeings() {
 }
 
 private void setRandomBeingBuilder() {
-  mBeingBuilder = new ArchitectureBuilder();
+  mBeingBuilder = new FoliageBuilder();
 }
 
 private void handleTap() {
@@ -211,7 +211,7 @@ private void increaseHeat() {
   resetBeats();
 
   if (mBeatMultipleToTrigger > 1) {
-    mBeatMultipleToTrigger /= 2;
+    //mBeatMultipleToTrigger /= 2;
     adjustColorForHeat();
   }
 

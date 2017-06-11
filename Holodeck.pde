@@ -31,8 +31,8 @@ class Holodeck extends Being {
     final float sectionAge = 0; //getSectionAge();
 
     //println("DEBUG: Holodeck: drawIfAlive(): sectionAge: " + sectionAge);
-background(0);
-
+    //background(0);
+    rotate(millis() * 100);
     noFill();
     stroke(
         //colorWithNewAlpha(c, (int) (16f * (1f - sectionAge)))
