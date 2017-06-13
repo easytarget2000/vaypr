@@ -1,3 +1,6 @@
+/**
+ Static Finals
+ */
 
 private static final boolean VERBOSE = true;
 
@@ -15,7 +18,21 @@ private static final char ADD_BACKDROP_BEING_KEY = 'q' ;
 
 private static final int TAP_RESET_INTERVAL_MILLIS = 1500;
 
+private static final int MAX_RANDOM_CLEAR_INTERVAL_MILLIS = 20 * 1000;
+
 private static final int NUM_OF_INITIAL_BACKDROP_BEINGS = 2;
+
+/**
+ Enums
+ */
+
+private enum ClearMode {
+  BEAT, NEVER, RANDOM
+}
+
+/**
+ Attributes
+ */
 
 private BeingBuilder mBeingBuilder;
 
@@ -31,9 +48,12 @@ private float mOverlayImageSize;
 
 private color mColor = 0xffffffff;
 
+private ClearMode mClearMode = ClearMode.RANDOM;
+
 private float mBpm = 130f;
 
-//private int mBeatLengthMillis = (int) (60f * 1000f / mBpm);
+private int mRandomClearMillis;
+
 private int mBeatLengthMillis = 500;
 
 private boolean mDrawFrameRate = true;
@@ -48,6 +68,10 @@ private int mLastKeyPressMillis = 0;
 
 private ArrayList<Integer> mTaps = new ArrayList<Integer>();
 
+/**
+ Lifecycle
+ */
+
 void setup() {
   fullScreen(2);
   //fullScreen();
@@ -56,13 +80,17 @@ void setup() {
   //mOverlayImage = loadImage("mnq.png");
   //mOverlayImageSize = width / 16f;
 
-  resetBackdropBeings();
-  resetScreenWithBackdrop();
-
   setRandomBeingBuilder();
   setRandomColor();
 
-  final int numberOfInitialBeings = (mBeingBuilder.getRecommendedMaxNumber() / 2);
+  resetBackdropBeings();
+  resetScreenWithBackdrop();
+
+  if (mClearMode == ClearMode.RANDOM) {
+    setRandomClearMillis();
+  }
+
+  final int numberOfInitialBeings = mBeingBuilder.getRecommendedMaxNumber();
   for (int i = 0; i < numberOfInitialBeings; i++) {
     addBeing();
   }
@@ -79,7 +107,16 @@ void draw() {
     }
   }
 
-  countBeats();
+  switch (mClearMode) {
+  case BEAT:
+    countBeats();
+    break;
+  case RANDOM:
+    checkRandomClearMillis();
+    break;
+  default:
+    break;
+  }
 
   if (mDrawOverlayImage) {
     final float imageX = (width / 2f) - (mOverlayImage.width / 2f);
@@ -105,7 +142,9 @@ void keyPressed() {
   switch (key) {
   case TAP_KEY:
     resetScreenWithBackdrop();
-    handleTap();
+    if (mClearMode == ClearMode.BEAT) {
+      handleTap();
+    }
     break;
   case CLEAR_KEY:
     resetScreenWithBackdrop();
@@ -116,11 +155,15 @@ void keyPressed() {
     break;
 
   case DECREASE_HEAT_KEY:
-    decreaseHeat();
+    if (mClearMode == ClearMode.BEAT) {
+      decreaseHeat();
+    }
     break;
 
   case INCREASE_HEAT_KEY:
-    increaseHeat();
+    if (mClearMode == ClearMode.BEAT) {
+      increaseHeat();
+    }
     break;
 
   case ADD_BACKDROP_BEING_KEY:
@@ -159,6 +202,10 @@ private void resetBackdropBeings() {
 private void setRandomBeingBuilder() {
   mBeingBuilder = new FoliageBuilder();
 }
+
+/**
+ Clear Mode Beat specific:
+ */
 
 private void handleTap() {
 
@@ -220,14 +267,6 @@ private void increaseHeat() {
 
 private void adjustColorForHeat() {
   setRandomColorWithAlpha((int) (mBeingBuilder.getRecommendedAlpha() * 0.2));
-
-  //if (mBeatMultipleToTrigger == 1) {
-  //  setRandomColorWithAlpha(mBeingBuilder.getRecommendedAlpha() * 3);
-  //} else if (mBeatMultipleToTrigger == 2) {
-  //  setRandomColorWithAlpha((int) (mBeingBuilder.getRecommendedAlpha() * 1.5f));
-  //} else {
-  //  setRandomColor();
-  //}
 }
 
 private void countBeats() {
@@ -280,6 +319,26 @@ private void resetBeats() {
   mCurrentBeat = mCurrentBeat + (mCurrentBeat % 4);
   mLastBeatMillis = 0;
 }
+
+/**
+ Clear Mode Random specific:
+ */
+
+private void checkRandomClearMillis() {
+  if (millis() > mRandomClearMillis) {
+
+    setRandomClearMillis();
+  }
+}
+
+private void setRandomClearMillis() {
+  final int timeInterval = (int) random((float) MAX_RANDOM_CLEAR_INTERVAL_MILLIS);
+  mRandomClearMillis = millis() + timeInterval;
+}
+
+/**
+ Beings:
+ */
 
 private void addBeing() {
   if (mBeings.size() >= mBeingBuilder.getRecommendedMaxNumber()) {
