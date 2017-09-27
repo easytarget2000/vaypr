@@ -1,17 +1,17 @@
 class Foliage extends Being {
 
-  private static final int NUM_OF_INITIAL_NODES = 64;
+  private static final int NUM_OF_INITIAL_NODES = 256;
 
   private static final int MAX_AGE = 640;
 
-  private static final int ADD_NODE_ROUND_LIMIT = 2;
-  
-  private static final int MAX_NUM_OF_NODES = 480;
+  private static final int ADD_NODE_ROUND_LIMIT = 1;
 
-  private static final float PUSH_FORCE = 4f;
+  private static final int MAX_NUM_OF_NODES = 320;
+
+  private static final float PUSH_FORCE = 2f;
 
   private Node mFirstNode;
-  
+
   private int mNodeAddCounter = 0;
 
   private float mDisplaySize = max(width, height);
@@ -20,7 +20,7 @@ class Foliage extends Being {
 
   private float mNodeDensity = (int) (NUM_OF_INITIAL_NODES / 16f);
 
-  private float mNodeRadius = mDisplaySize / 300f;
+  private float mNodeRadius = mDisplaySize / 512f;
 
   private float mNeighbourGravity = mNodeRadius * 0.5f;
 
@@ -110,62 +110,71 @@ class Foliage extends Being {
     noFill();
     stroke(c);
 
-    final float[] x = new float[4];
-    final float[] y = new float[4];
+    //final float[] x = new float[4];
+    //final float[] y = new float[4];
 
     int nodeCounter = 0;
 
     Node currentNode = mFirstNode;
-    x[0] = currentNode.mX;
-    y[0] = currentNode.mY;
+    //x[0] = currentNode.mX;
+    //y[0] = currentNode.mY;
 
     Node nextNode;
+    for (int i = 0; i < 8; i++) {
+      do {
+        nextNode = currentNode.mNext;
+        if (nextNode == null) {
+          break;
+        }
 
-    do {
-      nextNode = currentNode.mNext;
-      if (nextNode == null) {
-        break;
-      }
+        currentNode.update();
 
-      currentNode.update();
+        if (
+          ++mNodeAddCounter < ADD_NODE_ROUND_LIMIT
+          && nodeCounter < MAX_NUM_OF_NODES
+          && (nodeCounter % mNodeDensity == 0)
+          ) {
+          //println("addNode: " + nodeCounter);
+          addNodeNextTo(currentNode);
+        }
 
-      if (
-        ++mNodeAddCounter < ADD_NODE_ROUND_LIMIT
-        && nodeCounter < MAX_NUM_OF_NODES
-        && (nodeCounter % mNodeDensity == 0)
-      ) {
-        //println("addNode: " + nodeCounter);
-        addNodeNextTo(currentNode);
-      }
+        //currentNode.drawSelf();
 
-      final int bezierIndex = (nodeCounter % 4) + 1;
+        //final int bezierIndex = (nodeCounter % 4) + 1;
 
-      if (bezierIndex == 4) {
-        bezier(
-          x[0], y[0], 
-          x[1], y[1], 
-          x[2], y[2], 
-          x[3], y[3]
-          );
-        //line(x[0], y[0], x[3], y[3]);
+        //if (bezierIndex == 4) {
+        //  bezier(
+        //    x[0], y[0], 
+        //    x[1], y[1], 
+        //    x[2], y[2], 
+        //    x[3], y[3]
+        //    );
+        //  //line(x[0], y[0], x[3], y[3]);
 
-        bezier(
-          width - x[0], y[0], 
-          width - x[1], y[1], 
-          width - x[2], y[2], 
-          width - x[3], y[3]
-          );
+        //  bezier(
+        //    width - x[0], y[0], 
+        //    width - x[1], y[1], 
+        //    width - x[2], y[2], 
+        //    width - x[3], y[3]
+        //    );
 
-        x[0] = x[3] + 1;
-        y[0] = y[3] + 1;
-      } else {
-        x[bezierIndex] = currentNode.mX;
-        y[bezierIndex] = currentNode.mY;
-      }
+        //  x[0] = x[3] + 1;
+        //  y[0] = y[3] + 1;
+        //} else {
+        //  x[bezierIndex] = currentNode.mX;
+        //  y[bezierIndex] = currentNode.mY;
+        //}
+        point(currentNode.mX, currentNode.mY);
+        point(width - currentNode.mX, currentNode.mY);
 
-      currentNode = nextNode;
-      ++nodeCounter;
-    } while (!mStopped && currentNode != mFirstNode);
+        //if (random(1f) > 0.95f) {
+        //  stroke(getRandomColor());
+        //}
+
+        currentNode = nextNode;
+        ++nodeCounter;
+      } while (!mStopped && currentNode != mFirstNode);
+    }
     return true;
   }
 
@@ -269,5 +278,14 @@ class Foliage extends Being {
         otherNode = otherNode.mNext;
       } while (!mStopped);
     }
+  }
+
+  private color getRandomColor() {
+    return color(
+      (int) random(100) + 155, 
+      (int) random(100) + 155, 
+      (int) random(100) + 155, 
+      40
+      );
   }
 }

@@ -1,4 +1,4 @@
-/**
+/** //<>//
  Static Finals
  */
 
@@ -46,17 +46,15 @@ private PImage mOverlayImage;
 
 private float mOverlayImageSize;
 
-private color mColor = 0xffffffff;
+private color mColor = 0x60ffffff;
 
 private ClearMode mClearMode = ClearMode.RANDOM;
-
-private float mBpm = 130f;
 
 private int mRandomClearMillis;
 
 private int mBeatLengthMillis = 500;
 
-private boolean mDrawFrameRate = true;
+private boolean mDrawFrameRate = false;
 
 private int mLastBeatMillis = 0;
 
@@ -73,15 +71,15 @@ private ArrayList<Integer> mTaps = new ArrayList<Integer>();
  */
 
 void setup() {
-  fullScreen(2);
+  //fullScreen(2);
   //fullScreen();
-  //size(1920, 1080);
+  size(1920, 1080, P3D);
 
   //mOverlayImage = loadImage("mnq.png");
   //mOverlayImageSize = width / 16f;
 
   setRandomBeingBuilder();
-  setRandomColor();
+  //setRandomColor();
 
   resetBackdropBeings();
   resetScreenWithBackdrop();
@@ -89,16 +87,21 @@ void setup() {
   if (mClearMode == ClearMode.RANDOM) {
     setRandomClearMillis();
   }
-
-  final int numberOfInitialBeings = mBeingBuilder.getRecommendedMaxNumber();
-  for (int i = 0; i < numberOfInitialBeings; i++) {
-    addBeing();
-  }
 }
 
 void draw() {
 
-  for (int f = 0; f < mBeings.size(); f++) {
+  translate(width / 2f, 0f);
+  rotateX(frameCount * 0.01f);
+  translate(-width / 2f, 0f);
+
+  final int numberOfBeings = mBeings.size();
+
+  if (numberOfBeings < 1) {
+    populateWithBeings();
+  }
+
+  for (int f = 0; f < numberOfBeings; f++) {
     final Being being = mBeings.get(f);
     final boolean beingIsAlive = being.drawIfAlive(mColor);
     if (!beingIsAlive) {
@@ -168,6 +171,13 @@ void keyPressed() {
 
   case ADD_BACKDROP_BEING_KEY:
     addBackdropBeing();
+  }
+}
+
+private void populateWithBeings() {
+  final int numberOfInitialBeings = mBeingBuilder.getRecommendedMaxNumber();
+  for (int i = 0; i < numberOfInitialBeings; i++) {
+    addBeing();
   }
 }
 
@@ -244,7 +254,7 @@ private void handleTap() {
 
 private void decreaseHeat() {
   resetBeats();
-  setRandomColor();
+  //setRandomColor();
 
   if (mBeatMultipleToTrigger < 16) {
     mBeatMultipleToTrigger *= 2;
@@ -266,7 +276,7 @@ private void increaseHeat() {
 }
 
 private void adjustColorForHeat() {
-  setRandomColorWithAlpha((int) (mBeingBuilder.getRecommendedAlpha() * 0.2));
+  //setRandomColorWithAlpha((int) (mBeingBuilder.getRecommendedAlpha() * 0.2));
 }
 
 private void countBeats() {
@@ -291,7 +301,7 @@ private void countBeats() {
     }
 
     if (mCurrentBeat % 8 == 0) {
-      setRandomColor();
+      //setRandomColor();
       addBackdropBeing();
       switch ((int) random(5)) {
       case 0:
@@ -345,11 +355,7 @@ private void addBeing() {
     return;
   }
 
-  for (int i = 0; i < 1; i++) {
-    final float x = random(displayWidth);
-    final float y = random(displayHeight);
-    mBeings.add(mBeingBuilder.build());
-  }
+  mBeings.add(mBeingBuilder.build());
 
   resetScreenWithBackdrop();
 }

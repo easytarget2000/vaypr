@@ -25,7 +25,6 @@ class ArchitectureBuilder implements BeingBuilder {
   int getRecommendedMaxNumber() {
     return 1;
   }
-  
 }
 
 /**
@@ -53,15 +52,6 @@ class FoliageBuilder implements BeingBuilder {
 
     final Foliage foliage = new Foliage();
 
-    //switch ((int) random(4)) {
-    //case 0:
-    //  foliage.initLine();
-    //  break;
-    //default:
-    //  foliage.initCircle();
-    //}
-
-    //DEBUG:
     foliage.initCircle();
 
     return foliage;
@@ -205,10 +195,30 @@ class SnailBuilder implements BeingBuilder {
 }
 
 /**
+ * StarBuilder
+ */
+
+class Starscape implements BeingBuilder {
+  
+  public Being build() {
+    return new Star();
+  }
+  
+  public int getRecommendedAlpha() {
+    return 32;
+  }
+
+  public int getRecommendedMaxNumber() {
+    return 128;
+  }
+  
+}
+
+/**
  *
  */
 
-class HolodeckBuilder implements BeingBuilder {
+  class HolodeckBuilder implements BeingBuilder {
 
   public Being build() {
     return new Holodeck();

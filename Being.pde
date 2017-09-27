@@ -10,9 +10,9 @@ abstract class Being implements Drawable {
 
   protected float mJitter = width * 0.005f;
   
-  protected float mStartX = (width * 0.1f) + random(width * 0.8f);
+  protected float mStartX = (width * 0.33f); // + random(width * 0.33f);
   
-  protected float mStartY = (height * 0.1f) + random(height * 0.8f);
+  protected float mStartY = height / 2f;
 
   public void stopPerforming() {
     mStopped = true;
