@@ -46,7 +46,7 @@ private PImage mOverlayImage;
 
 private float mOverlayImageSize;
 
-private color mColor = 0x60ffffff;
+private color mColor = 0xffffffff;
 
 private ClearMode mClearMode = ClearMode.RANDOM;
 
@@ -72,8 +72,11 @@ private ArrayList<Integer> mTaps = new ArrayList<Integer>();
 
 void setup() {
   //fullScreen(2);
-  //fullScreen();
+  //fullScreen(P3D);
   size(1920, 1080, P3D);
+  //size(1920, 1080);
+
+  colorMode(HSB, 1);
 
   //mOverlayImage = loadImage("mnq.png");
   //mOverlayImageSize = width / 16f;
@@ -87,28 +90,21 @@ void setup() {
   if (mClearMode == ClearMode.RANDOM) {
     setRandomClearMillis();
   }
+
+  //frameRate(1);
 }
 
 void draw() {
 
+  //background(0); 
+
+  //push();
   translate(width / 2f, 0f);
-  rotateX(frameCount * 0.01f);
+  rotateY(frameCount / 128f);
   translate(-width / 2f, 0f);
+  //rotateY(mouseX / 128f);
 
-  final int numberOfBeings = mBeings.size();
-
-  if (numberOfBeings < 1) {
-    populateWithBeings();
-  }
-
-  for (int f = 0; f < numberOfBeings; f++) {
-    final Being being = mBeings.get(f);
-    final boolean beingIsAlive = being.drawIfAlive(mColor);
-    if (!beingIsAlive) {
-      mBeings.remove(f);
-      addBeing();
-    }
-  }
+  drawAndUpdateBeings();
 
   switch (mClearMode) {
   case BEAT:
@@ -120,6 +116,8 @@ void draw() {
   default:
     break;
   }
+
+  //pop();
 
   if (mDrawOverlayImage) {
     final float imageX = (width / 2f) - (mOverlayImage.width / 2f);
@@ -151,6 +149,8 @@ void keyPressed() {
     break;
   case CLEAR_KEY:
     resetScreenWithBackdrop();
+    mBeings = new ArrayList<Being>();
+    addBeing();
     break;
 
   case CHANGE_MODE_KEY:
@@ -172,6 +172,39 @@ void keyPressed() {
   case ADD_BACKDROP_BEING_KEY:
     addBackdropBeing();
   }
+}
+
+/*
+Implementations
+ */
+
+private void drawAndUpdateBeings() {
+  final int numberOfBeings = mBeings.size();
+
+  if (numberOfBeings < 1) {
+    populateWithBeings();
+  }
+
+  //stroke(frameCount / 1000, 1, 1, 1);
+
+  for (int f = 0; f < numberOfBeings; f++) {
+    final Being being = mBeings.get(f);
+    final boolean beingIsAlive = being.drawIfAlive(mColor);
+    if (!beingIsAlive) {
+      mBeings.remove(f);
+      addBeing();
+    }
+  }
+}
+
+private void push() {
+  pushMatrix();
+  pushStyle();
+}
+
+private void pop() {
+  popStyle();
+  popMatrix();
 }
 
 private void populateWithBeings() {

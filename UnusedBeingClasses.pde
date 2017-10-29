@@ -529,7 +529,7 @@ class LineCollection extends Being {
 *
 */
 
-class Grill extends Being { //<>// //<>// //<>// //<>//
+class Grill extends Being { //<>// //<>// //<>// //<>// //<>// //<>//
 
   private static final int MAX_AGE = 128;
 
